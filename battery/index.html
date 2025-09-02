@@ -3,57 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>인터랙티브 배터리 팩 열 시뮬레이터</title>
+    <title>올인원 배터리 팩 열 시뮬레이터</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+        
         body {
-            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.7;
         }
         .container {
-            max-width: 900px;
-            margin: 20px;
-            padding: 25px;
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
             background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px_8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
-        h1, h2 {
-            color: #0b3d91;
-            border-bottom: 2px solid #e0e0e0;
+        header {
+            text-align: center;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            font-size: 2.5em;
+            color: #0056b3;
+            margin: 0;
+        }
+        header p {
+            font-size: 1.1em;
+            color: #6c757d;
+        }
+        section {
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 2em;
+            color: #0056b3;
+            border-bottom: 2px solid #e9ecef;
             padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .infographic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             text-align: center;
         }
-        .simulator {
-            background-color: #e3f2fd;
-            border: 1px solid #bbdefb;
-            padding: 20px;
+        .infographic-step {
+            background-color: #f8f9fa;
+            padding: 25px;
             border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .infographic-step h3 {
+            font-size: 1.4em;
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+        }
+        .spec-table th, .spec-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+        .spec-table th {
+            background-color: #e3f2fd;
+            font-weight: 700;
+        }
+        .formula-box {
+            background-color: #fff9c4;
+            border-left: 5px solid #fbc02d;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .simulator {
+            background-color: #f1f8e9;
+            border: 1px solid #dcedc8;
+            padding: 25px;
+            border-radius: 8px;
         }
         .input-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            font-weight: bold;
-            color: #1e88e5;
-            margin-bottom: 5px;
-        }
-        input[type="number"] {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
-        }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-weight: 700; color: #388e3c; margin-bottom: 5px; }
+        input[type="number"] { padding: 10px; border: 1px solid #a5d6a7; border-radius: 4px; font-size: 1em; }
         button {
             grid-column: 1 / -1;
             background-color: #4caf50;
@@ -66,95 +111,147 @@
             margin-top: 20px;
             transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #45a049;
-        }
-        .results-box {
-            background-color: #fffde7;
-            border-left: 5px solid #fbc02d;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 5px;
-            display: none; /* Initially hidden */
-        }
-        .results-box h3 {
-            margin-top: 0;
-            color: #c0392b;
-        }
-         .results-box p {
-            margin: 10px 0;
-            font-size: 1.1em;
-        }
-        .insight {
-            background-color: #e8f5e9;
-            border-left: 5px solid #4caf50;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 5px;
-            font-style: italic;
-        }
+        button:hover { background-color: #45a049; }
+        #results-output { display: none; margin-top: 20px; }
+        .results-summary { font-size: 1.2em; font-weight: bold; }
+        b { color: #c62828; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>🔋 인터랙티브 배터리 팩 열 시뮬레이터</h1>
-        <p>이 페이지는 배터리 팩의 열적 거동을 시뮬레이션합니다. 아래 입력값을 조정한 후 '계산 시작' 버튼을 눌러 다양한 시나리오의 결과를 즉시 확인해보세요.</p>
-        
-        <div class="simulator">
-            <h2>⚙️ STEP 1: 변수 입력</h2>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label for="cell_count">셀 개수 (짝수)</label>
-                    <input type="number" id="cell_count" value="8">
-                </div>
-                <div class="input-group">
-                    <label for="discharge_current_a">셀 당 방전 전류 (A)</label>
-                    <input type="number" id="discharge_current_a" value="40.0">
-                </div>
-                <div class="input-group">
-                    <label for="ambient_temp_c">외부 공기 온도 (°C)</label>
-                    <input type="number" id="ambient_temp_c" value="40.0">
-                </div>
-                <div class="input-group">
-                    <label for="initial_temp_c">배터리 초기 온도 (°C)</label>
-                    <input type="number" id="initial_temp_c" value="30.0">
-                </div>
-                <div class="input-group">
-                    <label for="pcm_melt_temp_c">PCM 녹는점 (°C)</label>
-                    <input type="number" id="pcm_melt_temp_c" value="50.0">
-                </div>
-                <div class="input-group">
-                    <label for="limit_temp_c">최종 제한 온도 (°C)</label>
-                    <input type="number" id="limit_temp_c" value="70.0">
-                </div>
-                <button onclick="calculateThermalPerformance()">계산 시작</button>
-            </div>
-        </div>
+        <header>
+            <h1>🔋 올인원(All-in-One) 배터리 팩 열 시뮬레이터</h1>
+            <p>배터리 팩의 열적 거동에 대한 개념 이해부터 실제 계산까지, 모든 것을 한 페이지에서 경험하세요.</p>
+        </header>
 
-        <div id="results-output" class="results-box">
+        <section id="infographic">
+            <h2>📊 인포그래픽: 열 상승의 3단계</h2>
+            <div class="infographic-grid">
+                <div class="infographic-step">
+                    <h3>[Phase 1] 일반 발열 구간</h3>
+                    <p>배터리 작동 시 발생하는 열로 인해 초기 온도에서 PCM 녹는점까지 온도가 꾸준히 상승합니다.</p>
+                </div>
+                <div class="infographic-step">
+                    <h3>[Phase 2] PCM 열 흡수 구간</h3>
+                    <p>PCM이 녹으면서 온도 상승 없이 열을 흡수하는 <b>'골든타임'</b>입니다. 이 안전 버퍼가 시스템을 보호합니다.</p>
+                </div>
+                <div class="infographic-step">
+                    <h3>[Phase 3] 위험 구간</h3>
+                    <p>PCM이 모두 녹은 후, 다시 온도가 상승하여 최종 한계 온도에 도달해가는 단계입니다.</p>
+                </div>
             </div>
+        </section>
+
+        <section id="material-spec">
+            <h2>🔬 핵심 소재 분석: PCM 포팅재란?</h2>
+            <p>PCM(상변화 물질) 포팅재는 특정 온도에서 상태가 변하며(고체→액체) 주변의 열을 대량으로 흡수하는 스마트 소재입니다. 마치 음료 속 얼음이 녹으며 시원함을 유지하듯, 배터리 팩의 온도가 급격히 오르는 것을 막아줍니다.</p>
+            <table class="spec-table">
+                <caption>대표 제품: Henkel LOCTITE TCP 4000PM</caption>
+                <thead>
+                    <tr>
+                        <th>특성 (Property)</th>
+                        <th>값 (Value)</th>
+                        <th>역할 및 중요성</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>상변화 온도</b></td>
+                        <td>약 50°C</td>
+                        <td>열 흡수 기능이 활성화되는 온도를 결정합니다.</td>
+                    </tr>
+                    <tr>
+                        <td><b>잠열 용량</b></td>
+                        <td>155 J/g</td>
+                        <td>핵심적인 '열 흡수 능력'입니다. 값이 클수록 더 많은 열을 흡수합니다.</td>
+                    </tr>
+                    <tr>
+                        <td><b>열전도도</b></td>
+                        <td>1.6 W/m·K</td>
+                        <td>평상시 열을 외부로 잘 방출하는 능력입니다. 높을수록 냉각에 유리합니다.</td>
+                    </tr>
+                    <tr>
+                        <td><b>밀도</b></td>
+                        <td>2.5 g/cm³</td>
+                        <td>무게 및 총 열 흡수량 계산에 사용됩니다.</td>
+                    </tr>
+                    <tr>
+                        <td><b>전기 절연성</b></td>
+                        <td>> 15 kV/mm</td>
+                        <td>포팅재의 기본 기능으로, 전기적 합선을 방지합니다.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="calculation-logic">
+            <h2>∑ 계산 원리: 열역학 공식 이해하기</h2>
+            <p>시뮬레이터는 아래의 열역학 원리를 기반으로 각 단계의 시간을 계산합니다.</p>
+            <div class="formula-box">
+                <p><b>[Phase 1 & 3] 시간 = 필요한 에너지(Q) / 순수 발열량(P_net)</b></p>
+                <ul>
+                    <li>필요한 에너지 (<b>Q</b>) = 시스템 총 열용량 (<b>C_th</b>) × 온도 변화 (<b>ΔT</b>)</li>
+                    <li>시스템 총 열용량 (<b>C_th</b>) = (셀 질량×비열) + (포팅재 질량×비열) + (케이스 질량×비열)</li>
+                    <li>순수 발열량 (<b>P_net</b>) = 총 발열량 (<b>P_in</b>) - 외부 방열량 (<b>P_out</b>)</li>
+                </ul>
+                <hr>
+                <p><b>[Phase 2] 시간 = PCM 총 흡수 열량(Q_latent) / 순수 발열량(P_net)</b></p>
+                <ul>
+                    <li>PCM 총 흡수 열량 (<b>Q_latent</b>) = 포팅재 질량 (<b>m_potting</b>) × 잠열 용량 (<b>L_pcm</b>)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="simulator">
+            <h2>⚙️ 인터랙티브 시뮬레이터</h2>
+            <div class="simulator">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="cell_count">셀 개수 (짝수)</label>
+                        <input type="number" id="cell_count" value="8" step="2">
+                    </div>
+                    <div class="input-group">
+                        <label for="discharge_current_a">셀 당 방전 전류 (A)</label>
+                        <input type="number" id="discharge_current_a" value="40.0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="ambient_temp_c">외부 공기 온도 (°C)</label>
+                        <input type="number" id="ambient_temp_c" value="40.0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="initial_temp_c">배터리 초기 온도 (°C)</label>
+                        <input type="number" id="initial_temp_c" value="30.0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="pcm_melt_temp_c">PCM 녹는점 (°C)</label>
+                        <input type="number" id="pcm_melt_temp_c" value="50.0" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="limit_temp_c">최종 제한 온도 (°C)</label>
+                        <input type="number" id="limit_temp_c" value="70.0" step="1">
+                    </div>
+                    <button onclick="calculateThermalPerformance()">결과 계산</button>
+                </div>
+                <div id="results-output"></div>
+            </div>
+        </section>
+
     </div>
 
     <script>
         function calculateThermalPerformance() {
             // --- 물리적 상수 정의 ---
-            const CONSTANTS = {
-                CELL_DIAMETER_M: 0.021,
-                CELL_HEIGHT_M: 0.070,
-                CELL_MASS_KG: 0.068,
-                CELL_INTERNAL_RESISTANCE_OHM: 0.005,
-                SPECIFIC_HEAT_CELL_J_KGK: 900,
-                DENSITY_POTTING_KG_M3: 2500,
-                SPECIFIC_HEAT_POTTING_J_KGK: 1200,
-                LATENT_HEAT_POTTING_J_KG: 155000,
-                CASE_THICKNESS_M: 0.002,
-                DENSITY_ALUMINUM_KG_M3: 2700,
-                SPECIFIC_HEAT_ALUMINUM_J_KGK: 900,
+            const C = {
+                CELL_DIAMETER_M: 0.021, CELL_HEIGHT_M: 0.070, CELL_MASS_KG: 0.068,
+                CELL_INTERNAL_RESISTANCE_OHM: 0.005, SPECIFIC_HEAT_CELL_J_KGK: 900,
+                DENSITY_POTTING_KG_M3: 2500, SPECIFIC_HEAT_POTTING_J_KGK: 1200,
+                LATENT_HEAT_POTTING_J_KG: 155000, CASE_THICKNESS_M: 0.002,
+                DENSITY_ALUMINUM_KG_M3: 2700, SPECIFIC_HEAT_ALUMINUM_J_KGK: 900,
                 HEAT_TRANSFER_COEFFICIENT_W_M2K: 10.0
             };
 
-            // 1. HTML에서 입력값 가져오기 (숫자로 변환)
+            // 1. HTML에서 입력값 가져오기
             const cell_count = parseInt(document.getElementById('cell_count').value);
             const discharge_current_a = parseFloat(document.getElementById('discharge_current_a').value);
             const ambient_temp_c = parseFloat(document.getElementById('ambient_temp_c').value);
@@ -162,96 +259,94 @@
             const pcm_melt_temp_c = parseFloat(document.getElementById('pcm_melt_temp_c').value);
             const limit_temp_c = parseFloat(document.getElementById('limit_temp_c').value);
 
-            if (cell_count % 2 !== 0) {
-                alert("셀 개수는 짝수여야 합니다.");
+            if (cell_count % 2 !== 0 || cell_count <= 0) {
+                alert("셀 개수는 0보다 큰 짝수여야 합니다.");
                 return;
             }
 
             // 2. 지오메트리 및 질량 계산
             const rows = 2;
             const cols = cell_count / 2;
-            const pack_width_m = cols * CONSTANTS.CELL_DIAMETER_M;
-            const pack_depth_m = rows * CONSTANTS.CELL_DIAMETER_M;
-            const pack_height_m = CONSTANTS.CELL_HEIGHT_M;
+            const pack_width_m = cols * C.CELL_DIAMETER_M;
+            const pack_depth_m = rows * C.CELL_DIAMETER_M;
+            const pack_height_m = C.CELL_HEIGHT_M;
             
             const volume_total_m3 = pack_width_m * pack_depth_m * pack_height_m;
-            const volume_cell_one_m3 = Math.PI * Math.pow(CONSTANTS.CELL_DIAMETER_M / 2, 2) * CONSTANTS.CELL_HEIGHT_M;
+            const volume_cell_one_m3 = Math.PI * Math.pow(C.CELL_DIAMETER_M / 2, 2) * C.CELL_HEIGHT_M;
             const volume_cells_total_m3 = volume_cell_one_m3 * cell_count;
             const volume_potting_m3 = volume_total_m3 - volume_cells_total_m3;
 
-            const mass_cells_kg = CONSTANTS.CELL_MASS_KG * cell_count;
-            const mass_potting_kg = volume_potting_m3 * CONSTANTS.DENSITY_POTTING_KG_M3;
+            const mass_cells_kg = C.CELL_MASS_KG * cell_count;
+            const mass_potting_kg = volume_potting_m3 * C.DENSITY_POTTING_KG_M3;
             const case_surface_area_m2 = 2 * (pack_width_m * pack_depth_m + pack_width_m * pack_height_m + pack_depth_m * pack_height_m);
-            const volume_case_m3 = case_surface_area_m2 * CONSTANTS.CASE_THICKNESS_M;
-            const mass_case_kg = volume_case_m3 * CONSTANTS.DENSITY_ALUMINUM_KG_M3;
+            const volume_case_m3 = case_surface_area_m2 * C.CASE_THICKNESS_M;
+            const mass_case_kg = volume_case_m3 * C.DENSITY_ALUMINUM_KG_M3;
 
             // 3. 총 발열량 및 열용량 계산
-            const heat_generation_per_cell_w = Math.pow(discharge_current_a, 2) * CONSTANTS.CELL_INTERNAL_RESISTANCE_OHM;
+            const heat_generation_per_cell_w = Math.pow(discharge_current_a, 2) * C.CELL_INTERNAL_RESISTANCE_OHM;
             const heat_generation_total_w = heat_generation_per_cell_w * cell_count;
             
-            const heat_capacity_cells_j_k = mass_cells_kg * CONSTANTS.SPECIFIC_HEAT_CELL_J_KGK;
-            const heat_capacity_potting_j_k = mass_potting_kg * CONSTANTS.SPECIFIC_HEAT_POTTING_J_KGK;
-            const heat_capacity_case_j_k = mass_case_kg * CONSTANTS.SPECIFIC_HEAT_ALUMINUM_J_KGK;
+            const heat_capacity_cells_j_k = mass_cells_kg * C.SPECIFIC_HEAT_CELL_J_KGK;
+            const heat_capacity_potting_j_k = mass_potting_kg * C.SPECIFIC_HEAT_POTTING_J_KGK;
+            const heat_capacity_case_j_k = mass_case_kg * C.SPECIFIC_HEAT_ALUMINUM_J_KGK;
             const total_heat_capacity_j_k = heat_capacity_cells_j_k + heat_capacity_potting_j_k + heat_capacity_case_j_k;
 
             // 4. 3단계 시간 계산
             let t1 = 0, t2 = 0, t3 = 0;
 
-            // Phase 1: 초기 온도 -> PCM 녹는점
+            // Phase 1
             if (pcm_melt_temp_c > initial_temp_c) {
                 const delta_t1 = pcm_melt_temp_c - initial_temp_c;
                 const energy_q1 = total_heat_capacity_j_k * delta_t1;
                 const avg_temp_t1 = (initial_temp_c + pcm_melt_temp_c) / 2;
-                const p_out1 = CONSTANTS.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (avg_temp_t1 - ambient_temp_c);
+                const p_out1 = C.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (avg_temp_t1 - ambient_temp_c);
                 const p_net1 = heat_generation_total_w - Math.max(0, p_out1);
-                if (p_net1 > 0) t1 = energy_q1 / p_net1;
-                else t1 = Infinity;
+                if (p_net1 > 0) t1 = energy_q1 / p_net1; else t1 = Infinity;
             }
 
-            // Phase 2: PCM 상변화 완료
-            const energy_q2 = mass_potting_kg * CONSTANTS.LATENT_HEAT_POTTING_J_KG;
-            const p_out2 = CONSTANTS.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (pcm_melt_temp_c - ambient_temp_c);
+            // Phase 2
+            const energy_q2 = mass_potting_kg * C.LATENT_HEAT_POTTING_J_KG;
+            const p_out2 = C.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (pcm_melt_temp_c - ambient_temp_c);
             const p_net2 = heat_generation_total_w - Math.max(0, p_out2);
-            if (p_net2 > 0) t2 = energy_q2 / p_net2;
-            else t2 = Infinity;
+            if (p_net2 > 0) t2 = energy_q2 / p_net2; else t2 = Infinity;
 
-            // Phase 3: PCM 녹는점 -> 최종 한계 온도
+            // Phase 3
             if (limit_temp_c > pcm_melt_temp_c) {
                 const delta_t3 = limit_temp_c - pcm_melt_temp_c;
                 const energy_q3 = total_heat_capacity_j_k * delta_t3;
                 const avg_temp_t3 = (pcm_melt_temp_c + limit_temp_c) / 2;
-                const p_out3 = CONSTANTS.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (avg_temp_t3 - ambient_temp_c);
+                const p_out3 = C.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (avg_temp_t3 - ambient_temp_c);
                 const p_net3 = heat_generation_total_w - Math.max(0, p_out3);
-                if (p_net3 > 0) t3 = energy_q3 / p_net3;
-                else t3 = Infinity;
+                if (p_net3 > 0) t3 = energy_q3 / p_net3; else t3 = Infinity;
             }
             
             // 5. 결과 표시
             const resultsDiv = document.getElementById('results-output');
             const formatTime = (seconds) => {
-                if (seconds === Infinity) return "무한대 (온도가 더 이상 오르지 않음)";
-                return `${seconds.toFixed(1)}초 (${(seconds / 60).toFixed(1)}분)`;
+                if (seconds === Infinity) return "무한대 (온도가 안정됨)";
+                return `<b>${seconds.toFixed(1)}초</b> (${(seconds / 60).toFixed(1)}분)`;
             };
             
             const total_safe_time = t1 === Infinity ? Infinity : t1 + t2;
             const total_limit_time = total_safe_time === Infinity ? Infinity : total_safe_time + t3;
 
             let insight_text = "";
-            const final_dissipation = CONSTANTS.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (limit_temp_c - ambient_temp_c);
+            const final_dissipation = C.HEAT_TRANSFER_COEFFICIENT_W_M2K * case_surface_area_m2 * (limit_temp_c - ambient_temp_c);
             if (heat_generation_total_w < final_dissipation) {
-                insight_text = "발열량보다 자연 방열량이 더 많거나 비슷하여 온도가 안정적으로 유지될 가능성이 있습니다. 장기적인 안정성은 열평형 온도를 확인해야 합니다.";
+                insight_text = "총 발열량이 자연 방열량보다 적어, 온도가 안정적으로 유지될 것으로 보입니다. 시스템이 과열되지 않습니다.";
             } else {
-                insight_text = "총 발열량이 자연 방열량보다 훨씬 많습니다. 별도의 능동 냉각 시스템(팬, 액체 냉각 등)이 없다면 배터리 팩의 온도는 지속적으로 상승하여 위험할 수 있습니다.";
+                insight_text = "총 발열량이 자연 방열량보다 많습니다. 별도의 능동 냉각 시스템(팬, 액체 냉각 등)이 없다면 배터리 팩의 온도는 결국 계속 상승하게 됩니다.";
             }
 
             resultsDiv.innerHTML = `
-                <h3>📊 계산 결과:</h3>
-                <p><strong>[Phase 1]</strong> PCM 녹는점(${pcm_melt_temp_c}°C) 도달 시간: <b>${formatTime(t1)}</b></p>
-                <p><strong>[Phase 2]</strong> PCM 열 흡수(버퍼) 시간: <b>${formatTime(t2)}</b></p>
-                <p><strong>[Phase 3]</strong> 최종 한계(${limit_temp_c}°C) 도달 추가 시간: <b>${formatTime(t3)}</b></p>
                 <hr>
-                <p class="results-summary">✅ 총 안전 시간 (PCM 소진까지): <b>${formatTime(total_safe_time)}</b></p>
-                <p class="results-summary">⚠️ 위험 도달 시간 (최종 한계까지): <b>${formatTime(total_limit_time)}</b></p>
+                <h2>📊 계산 결과</h2>
+                <p><strong>[Phase 1]</strong> PCM 녹는점(${pcm_melt_temp_c}°C) 도달 시간: ${formatTime(t1)}</p>
+                <p><strong>[Phase 2]</strong> PCM 열 흡수(버퍼) 시간: ${formatTime(t2)}</p>
+                <p><strong>[Phase 3]</strong> 최종 한계(${limit_temp_c}°C) 도달 추가 시간: ${formatTime(t3)}</p>
+                <hr>
+                <p class="results-summary">✅ 총 안전 시간 (PCM 소진까지): ${formatTime(total_safe_time)}</p>
+                <p class="results-summary">⚠️ 위험 도달 시간 (최종 한계까지): ${formatTime(total_limit_time)}</p>
                 <div class="insight">
                     <strong>💡 엔지니어링 인사이트:</strong> 
                     <p>${insight_text}</p>
