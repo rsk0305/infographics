@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경제 분석: 주식 시장과 환율</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 50vh;
+            max-height: 450px;
+        }
+        .kpi-card {
+            background-color: #005f73;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .kpi-label {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+        .flow-chart-item {
+            background-color: white;
+            border: 2px solid #94d2bd;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #0a9396;
+            align-self: center;
+            margin: 0.5rem 0;
+            transform: rotate(90deg);
+        }
+        @media (min-width: 768px) {
+            .flow-arrow {
+                transform: rotate(0deg);
+            }
+        }
+        .table-header {
+            background-color: #005f73;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#005f73] mb-2">엇갈린 행보: 주가와 환율</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">일본과 한국의 주식 시장 상승이 어떻게 서로 다른 경제 동력 속에서 통화 약세로 이어졌는지 분석합니다.</p>
+        </header>
+
+        <section id="japan" class="mb-16">
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#0a9396] mb-4">일본의 선례: 아베노믹스의 시대 (2012년 이후)</h2>
+                <p class="mb-6 text-gray-700">2011년 대지진과 수년간의 경기 침체 이후, 일본은 '아베노믹스'로 알려진 공격적인 경제 전략에 착수했습니다. 핵심은 일본 은행의 의도적인 통화 완화였습니다. 이 정책은 디플레이션을 극복하고 경제를 활성화하기 위해 설계되었으며, 엔화 약세는 단순한 부작용이 아니라 거대 수출 부문의 경쟁력을 높이기 위한 주요 목표였습니다.</p>
+                <div class="chart-container mb-6">
+                    <canvas id="japanChart"></canvas>
+                </div>
+                <p class="text-center text-sm text-gray-600 mb-8">위 차트는 뚜렷한 상관관계를 보여줍니다. 닛케이 225 지수가 급등함에 따라 일본 엔화 가치는 하락했습니다(USD/JPY 환율 상승). 이는 일본 통화 정책이 의도한 결과였습니다.</p>
+
+                <h3 class="text-2xl font-bold text-center text-[#ca6702] mb-6">아베노믹스의 엔진: 정책이 주도한 결과</h3>
+                <div class="flex flex-col md:flex-row justify-center items-stretch md:items-center gap-4">
+                    <div class="flow-chart-item flex-1">
+                        <h4 class="font-bold text-lg">공격적인 통화 완화</h4>
+                        <p>일본 은행은 대규모 양적 완화(QE)를 통해 시장에 엔화를 공급했습니다.</p>
+                    </div>
+                    <div class="flow-arrow">&#10140;</div>
+                    <div class="flow-chart-item flex-1">
+                        <h4 class="font-bold text-lg">엔화 가치 하락</h4>
+                        <p>낮은 금리는 미국과의 격차를 벌려 투자자들이 더 높은 수익률의 달러 자산을 위해 엔화를 매도하게 만들었습니다.</p>
+                    </div>
+                    <div class="flow-arrow">&#10140;</div>
+                    <div class="flow-chart-item flex-1">
+                        <h4 class="font-bold text-lg">수출 기업에 활력</h4>
+                        <p>엔저 현상으로 일본 수출품(자동차, 전자제품)의 가격 경쟁력이 높아져 글로벌 수익이 증가했습니다.</p>
+                    </div>
+                    <div class="flow-arrow">&#10140;</div>
+                    <div class="flow-chart-item flex-1">
+                        <h4 class="font-bold text-lg">닛케이 지수 급등</h4>
+                        <p>기업 이익 급증과 외국인 투자에 힘입어 주가는 수십 년 만에 최고치를 기록했습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="korea" class="mb-16">
+            <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-[#0a9396] mb-4">한국의 현재: 현대적 역설</h2>
+                <p class="mb-6 text-gray-700">최근 한국에서도 코스피 지수 상승과 원화 약세라는 비슷한 패턴이 나타나며 원/달러 환율이 1400원에 육박하고 있습니다. 하지만 그 배후의 동력은 일본의 정책 주도 접근 방식과는 근본적으로 다릅니다. 원화 약세는 국내 정책보다는 강력한 외부 요인과 국내 투자자들의 구조적 변화에 대한 반응입니다.</p>
+                <div class="chart-container mb-6">
+                    <canvas id="koreaChart"></canvas>
+                </div>
+                <p class="text-center text-sm text-gray-600 mb-8">최근 추세는 코스피 지수가 상승하는 동시에 원화 가치가 미국 달러 대비 약세를 보이는 현상을 보여주며 투자자들에게 의문을 안겨주고 있습니다.</p>
+
+                <h3 class="text-2xl font-bold text-center text-[#ca6702] mb-8">원화에 가해지는 주요 압력들</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-gray-100 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2">강력한 미국 달러</h4>
+                        <p>미국 연준의 공격적인 금리 인상은 달러를 글로벌 투자자들에게 가장 매력적인 통화로 만들었고, 원화를 포함한 대부분의 통화에 대해 달러 강세를 유발했습니다.</p>
+                        <div class="kpi-card mt-4 mx-auto w-48">
+                            <div class="kpi-value">> 5%</div>
+                            <div class="kpi-label">미국 기준금리 고점</div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2">자본 유출</h4>
+                        <p>대형 연기금부터 개인 투자자까지 한국 투자자들이 해외, 특히 미국 주식 시장에 투자를 늘리면서 달러에 대한 높은 수요를 창출하고 있습니다.</p>
+                         <div class="kpi-card mt-4 mx-auto w-48">
+                            <div class="kpi-value">&#8599;</div>
+                            <div class="kpi-label">한국의 해외 투자 증가</div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2">무역수지 변동성</h4>
+                        <p>반도체 수출은 견조하지만, 수입 에너지 의존도가 높아 국제 유가가 상승하면 무역 흑자가 줄어들 수 있습니다. 이는 외화 유입을 감소시켜 원화에 압박을 가합니다.</p>
+                         <div class="kpi-card mt-4 mx-auto w-48">
+                            <div class="kpi-value">~ $500억</div>
+                            <div class="kpi-label">2024년 무역 흑자</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion">
+             <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-[#005f73] mb-6">결론: 다른 길, 같은 결과</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">일본과 한국 모두 통화 약세와 함께 주식 시장 상승을 경험했지만, 그 배경은 다릅니다. 일본은 경제를 되살리기 위해 의도적으로 설계된 정책의 결과였습니다. 반면 한국은 글로벌 통화 동향과 국내 투자 행태의 구조적 변화에 대한 반응입니다.</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-sm font-light">
+                        <thead class="border-b font-medium">
+                            <tr>
+                                <th scope="col" class="table-header px-6 py-4">구분</th>
+                                <th scope="col" class="table-header px-6 py-4">일본 (2012년 이후)</th>
+                                <th scope="col" class="table-header px-6 py-4">한국 (최근)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b bg-gray-50">
+                                <td class="whitespace-nowrap px-6 py-4 font-medium">주요 동인</td>
+                                <td class="whitespace-nowrap px-6 py-4">의도적인 국내 통화 정책 (아베노믹스)</td>
+                                <td class="whitespace-nowrap px-6 py-4">외부 요인 (달러 강세) & 자본 유출</td>
+                            </tr>
+                            <tr class="border-b bg-white">
+                                <td class="whitespace-nowrap px-6 py-4 font-medium">통화 정책 목표</td>
+                                <td class="whitespace-nowrap px-6 py-4">수출 증대 및 디플레이션 극복을 위한 엔화 약세 유도</td>
+                                <td class="whitespace-nowrap px-6 py-4">원화 안정 (종종 시장 개입 필요)</td>
+                            </tr>
+                             <tr class="border-b bg-gray-50">
+                                <td class="whitespace-nowrap px-6 py-4 font-medium">금리 동향</td>
+                                <td class="whitespace-nowrap px-6 py-4">지출 장려를 위한 초저금리 유지</td>
+                                <td class="whitespace-nowrap px-6 py-4">원화 방어를 위한 금리 인상과 경기 부양을 위한 인하 사이의 딜레마</td>
+                            </tr>
+                            <tr class="border-b bg-white">
+                                <td class="whitespace-nowrap px-6 py-4 font-medium">주요 자본 흐름</td>
+                                <td class="whitespace-nowrap px-6 py-4">일본 주식을 매수하는 외국인 투자자</td>
+                                <td class="whitespace-nowrap px-6 py-4">해외 자산을 매수하는 국내 투자자</td>
+                            </tr>
+                             <tr class="border-b bg-gray-50">
+                                <td class="whitespace-nowrap px-6 py-4 font-medium">인과 관계</td>
+                                <td class="whitespace-nowrap px-6 py-4">통화 약세가 주가 상승을 '유발'</td>
+                                <td class="whitespace-nowrap px-6 py-4">통화 약세가 주가 상승과 '동반'</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<script>
+    const tooltipTitleCallback = {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    const japanYears = ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
+    const nikkeiData = [10230, 8500, 15900, 17450, 19033, 19114, 22764, 20014, 23656, 27444, 28906, 26094, 33464, 39800];
+    const usdjpyData = [77, 86, 105, 119, 120, 117, 112, 109, 108, 103, 115, 131, 141, 150];
+
+    const ctxJapan = document.getElementById('japanChart').getContext('2d');
+    new Chart(ctxJapan, {
+        type: 'line',
+        data: {
+            labels: japanYears,
+            datasets: [
+                {
+                    label: '닛케이 225 지수',
+                    data: nikkeiData,
+                    borderColor: '#0a9396',
+                    backgroundColor: 'rgba(10, 147, 150, 0.1)',
+                    yAxisID: 'yNikkei',
+                    tension: 0.1,
+                    fill: true
+                },
+                {
+                    label: 'USD/JPY 환율',
+                    data: usdjpyData,
+                    borderColor: '#ee9b00',
+                    backgroundColor: 'rgba(238, 155, 0, 0.1)',
+                    yAxisID: 'yUsdJpy',
+                    tension: 0.1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            scales: {
+                yNikkei: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: '닛케이 225 지수',
+                        color: '#0a9396'
+                    }
+                },
+                yUsdJpy: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'USD/JPY 환율',
+                        color: '#ee9b00'
+                    },
+                    grid: {
+                        drawOnChartArea: false, 
+                    },
+                }
+            },
+            ...tooltipTitleCallback
+        }
+    });
+    
+    const koreaMonths = ['23년 1월', '23년 4월', '23년 7월', '23년 10월', '24년 1월', '24년 4월', '24년 7월', '최근'];
+    const kospiData = [2425, 2501, 2632, 2273, 2615, 2742, 2774, 2800];
+    const usdkrwData = [1231, 1338, 1284, 1358, 1334, 1375, 1380, 1395];
+
+    const ctxKorea = document.getElementById('koreaChart').getContext('2d');
+    new Chart(ctxKorea, {
+        type: 'line',
+        data: {
+            labels: koreaMonths,
+            datasets: [
+                {
+                    label: '코스피 지수',
+                    data: kospiData,
+                    borderColor: '#9b2226',
+                    backgroundColor: 'rgba(155, 34, 38, 0.1)',
+                    yAxisID: 'yKospi',
+                    tension: 0.1,
+                    fill: true
+                },
+                {
+                    label: 'USD/KRW 환율',
+                    data: usdkrwData,
+                    borderColor: '#bb3e03',
+                    backgroundColor: 'rgba(187, 62, 3, 0.1)',
+                    yAxisID: 'yUsdKrw',
+                    tension: 0.1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            scales: {
+                yKospi: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: '코스피 지수',
+                        color: '#9b2226'
+                    }
+                },
+                yUsdKrw: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'USD/KRW 환율',
+                        color: '#bb3e03'
+                    },
+                    grid: {
+                        drawOnChartArea: false, 
+                    },
+                }
+            },
+            ...tooltipTitleCallback
+        }
+    });
+
+</script>
+</body>
+</html>
